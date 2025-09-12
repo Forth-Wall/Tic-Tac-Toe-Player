@@ -1,12 +1,54 @@
-# React + Vite
+# 🎮 Tic Tac Toe Player
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple, interactive Tic Tac Toe game built with React. Play against a basic AI opponent that makes strategic moves to win or block you. Designed for quick matches and clean gameplay.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- ✅ Player vs AI gameplay
+- 🧠 AI logic that tries to win or block the player
+- 🎲 Random symbol assignment (X or O)
+- 🖱️ Click-based board interaction
+- 🔄 Restart button to reset the game
+- 📱 Responsive layout using Tailwind CSS
 
-## Expanding the ESLint configuration
+## 🛠️ Technologies Used
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React (Functional Components + Hooks)
+- JavaScript (ES6+)
+- Tailwind CSS
+- Git & GitHub for version control
+
+## 📦 Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Forth-Wall/Tic-Tac-Toe-Player.git
+cd Tic-Tac-Toe-Player
+```
+
+Install dependencies:
+```bash
+npm install
+```
+
+Start the development server:
+```bash
+npm run dev
+```
+
+## 🧠 How the AI Works
+The AI follows a simple strategy:
+
+Try to win: If it can complete a winning combination, it does.
+
+Block the player: If the player is about to win, it blocks.
+
+Pick randomly: If no immediate threat or opportunity, it chooses a random empty square.
+
+The AI stops making moves once the game is won or drawn.
+
+## 📄 License
+This project is licensed under the Apache 2.0 License. See LICENSE to learn more.
+
+Made with ❤️ by Forth-Wall
