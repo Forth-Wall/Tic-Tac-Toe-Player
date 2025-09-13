@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 
 const WINNING_COMBINATIONS = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8],
-  [0, 3, 6], [1, 4, 7], [2, 5, 8],
-  [0, 4, 8], [2, 4, 6],
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
 ];
 
 function Square({ value, onClick }) {
@@ -32,6 +37,9 @@ function App() {
   const [playerSymbol, setPlayerSymbol] = useState(null);
   const [robotSymbol, setRobotSymbol] = useState(null);
   const [winningSymbol, setWinningSymbol] = useState(null);
+  const [round, setRound] = useState(0);
+
+  const cornerIndices = [0, 2, 6, 8];
 
   // Check for winner after every move
   useEffect(() => {
@@ -49,7 +57,7 @@ function App() {
     const robotMoves = squares.filter((s) => s === robotSymbol).length;
 
     if (playerMoves > robotMoves) {
-      setTimeout(() => aiMove(), 300);
+      setTimeout(aiMove, 300);
     }
   }, [squares, playerSymbol, robotSymbol, winningSymbol]);
 
@@ -61,52 +69,72 @@ function App() {
   }
 
   function aiMove() {
-    if (winningSymbol) return;
+    const emptyIndices = squares
+      .map((s, i) => (s === null ? i : null))
+      .filter((i) => i !== null);
 
-    const next = [...squares];
+    if (emptyIndices.length === 0 || winningSymbol) return;
 
-    // Try to win
-    for (let i = 0; i < 9; i++) {
-      if (!next[i]) {
-        next[i] = robotSymbol;
-        if (calculateWinner(next) === robotSymbol) {
-          setSquares(next);
-          return;
-        }
-        next[i] = null;
+    // Take a corner in first round if available
+    if (round < 1) {
+      const availableCorners = cornerIndices.filter((i) =>
+        emptyIndices.includes(i)
+      );
+      if (availableCorners.length > 0) {
+        const randomCorner =
+          availableCorners[Math.floor(Math.random() * availableCorners.length)];
+        const newSquares = [...squares];
+        newSquares[randomCorner] = robotSymbol;
+        setSquares(newSquares);
+        setRound((r) => r + 1);
+        return;
       }
     }
 
-    // Block player
-    for (let i = 0; i < 9; i++) {
-      if (!next[i]) {
-        next[i] = playerSymbol;
-        if (calculateWinner(next) === playerSymbol) {
-          next[i] = robotSymbol;
-          setSquares(next);
-          return;
-        }
-        next[i] = null;
+    for (let combo of WINNING_COMBINATIONS) {
+      const [a, b, c] = combo;
+
+      const emptySquares = [];
+      let playerCount = 0;
+      let robotCount;
+
+      // this goes through the combo and sees how close the player is to winning
+      [a, b, c].forEach((index, i) => {
+        if (squares[index] === playerSymbol) playerCount++;
+        if (squares[index] === robotSymbol) robotCount++;
+        if (squares[index] === null) emptySquares.push(index);
+      });
+
+      // checks to see if the robot can win before blocking
+      if (robotCount == 2 && emptySquares.length === 1) {
+        const newSquare = [...squares];
+        newSquare[emptySquares[0]] = robotSymbol;
+        setSquares(newSquare);
+        setRound(round + 1);
+        return;
+      }
+
+      // Block player
+      if (playerCount == 2 && emptySquares.length === 1) {
+        const newSquare = [...squares];
+        newSquare[emptySquares[0]] = robotSymbol;
+        setSquares(newSquare);
+        setRound(round + 1);
+        return;
       }
     }
 
-    // Pick random
-    const available = next
-      .map((val, idx) => (val ? null : idx))
-      .filter((val) => val !== null);
-
-    if (available.length > 0) {
-      const move = available[Math.floor(Math.random() * available.length)];
-      next[move] = robotSymbol;
-      setSquares(next);
-    }
+    // this picks a random index and chooses that
+    const randomIndex =
+      emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+    const newSquares = [...squares];
+    newSquares[randomIndex] = robotSymbol;
+    setSquares(newSquares);
+    setRound((r) => r + 1);
   }
 
   function restartGame() {
-    setSquares(Array(9).fill(null));
-    setPlayerSymbol(null);
-    setRobotSymbol(null);
-    setWinningSymbol(null);
+    window.location.reload();
   }
 
   function startGame() {
