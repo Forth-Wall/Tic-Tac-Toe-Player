@@ -57,12 +57,7 @@ function App() {
     const robotMoves = squares.filter((s) => s === robotSymbol).length;
 
     if (playerMoves > robotMoves) {
-      const timer = setTimeout(() => {
-        // check again just before making the move
-        if (!winningSymbol) aiMove();
-      }, 300);
-
-      return () => clearTimeout(timer); // clean up if effect runs again
+      setTimeout(() => aiMove(), 300);
     }
   }, [squares, winningSymbol]);
 
@@ -96,63 +91,43 @@ function App() {
 
     if (emptyIndices.length === 0 || winningSymbol) return;
 
-    // Take a corner in first round if available
-    if (round < 1) {
-      const availableCorners = cornerIndices.filter((i) =>
-        emptyIndices.includes(i)
-      );
-      if (availableCorners.length > 0) {
-        const randomCorner =
-          availableCorners[Math.floor(Math.random() * availableCorners.length)];
-        const newSquares = [...squares];
-        newSquares[randomCorner] = robotSymbol;
-        setSquares(newSquares);
-        setRound((r) => r + 1);
-        return;
+    const next = [...squares];
+
+    // Try to win
+    for (let i = 0; i < 9; i++) {
+      if (!next[i]) {
+        next[i] = robotSymbol;
+        if (calculateWinner(next) === robotSymbol) {
+          setSquares(next);
+          return;
+        }
+        next[i] = null;
       }
     }
 
-    for (let combo of WINNING_COMBINATIONS) {
-      const [a, b, c] = combo;
-
-      const emptySquares = [];
-      let playerCount = 0;
-      let robotCount = 0;
-
-      [a, b, c].forEach((index) => {
-        if (squares[index] === playerSymbol) playerCount++;
-        if (squares[index] === robotSymbol) robotCount++;
-        if (squares[index] === null) emptySquares.push(index);
-      });
-
-      // Can the robot win? Take the winning move Else block the player
-      const winIndex = findWinningMove(squares, robotSymbol);
-      if (winIndex !== null) {
-        const newSquares = [...squares];
-        newSquares[winIndex] = robotSymbol;
-        setSquares(newSquares);
-        setRound((r) => r + 1);
-        return;
-      }
-
-      // Block player
-      const blockIndex = findWinningMove(squares, playerSymbol);
-      if (blockIndex !== null) {
-        const newSquares = [...squares];
-        newSquares[blockIndex] = robotSymbol;
-        setSquares(newSquares);
-        setRound((r) => r + 1);
-        return;
+    // Block player
+    for (let i = 0; i < 9; i++) {
+      if (!next[i]) {
+        next[i] = playerSymbol;
+        if (calculateWinner(next) === playerSymbol) {
+          next[i] = robotSymbol;
+          setSquares(next);
+          return;
+        }
+        next[i] = null;
       }
     }
 
-    // if no one is about to win or is any danger of just pick a random index
-    const randomIndex =
-      emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
-    const newSquares = [...squares];
-    newSquares[randomIndex] = robotSymbol;
-    setSquares(newSquares);
-    setRound((r) => r + 1);
+    // Pick random
+    const available = next
+      .map((val, idx) => (val ? null : idx))
+      .filter((val) => val !== null);
+
+    if (available.length > 0) {
+      const move = available[Math.floor(Math.random() * available.length)];
+      next[move] = robotSymbol;
+      setSquares(next);
+    }
   }
 
   function restartGame() {
