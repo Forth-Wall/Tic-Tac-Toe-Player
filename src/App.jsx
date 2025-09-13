@@ -141,7 +141,7 @@ function App() {
   }
 
   const status = !playerSymbol
-    ? "Choose your symbol to start"
+    ? ""
     : winningSymbol
     ? `Winner: ${winningSymbol}`
     : squares.every(Boolean)
