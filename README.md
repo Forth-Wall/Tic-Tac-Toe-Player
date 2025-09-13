@@ -49,6 +49,6 @@ Pick randomly: If no immediate threat or opportunity, it chooses a random empty 
 The AI stops making moves once the game is won or drawn.
 
 ## 📄 License
-This project is licensed under the Apache 2.0 License. See LICENSE to learn more.
+This project is licensed under the Apache 2.0 License. See [LICENSE](https://github.com/Forth-Wall/Tic-Tac-Toe-Player/blob/main/LICENSE) to learn more.
 
 Made with ❤️ by Forth-Wall
