@@ -147,7 +147,7 @@ function App() {
     : squares.every(Boolean)
     ? "It's a draw!"
     : `Playing as: ${playerSymbol}`;
-
+  const currentYear = new Date().getFullYear()
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
       <h1 className="text-4xl font-bold mb-6 text-blue-600">Tic Tac Toe</h1>
@@ -169,6 +169,8 @@ function App() {
       >
         Restart
       </button>
+
+      <p className="fixed bottom-0 pb-5">&copy; {currentYear} All rights reserved</p>
     </div>
   );
 }
